@@ -1,3 +1,4 @@
+import axios from 'axios';
 const Card = (article) => {
   // TASK 5
   // ---------------------
@@ -6,6 +7,34 @@ const Card = (article) => {
   // The tags used, the hierarchy of elements and their attributes must match the provided markup exactly!
   // The text inside elements will be set using their `textContent` property (NOT `innerText`).
   // Add a listener for click events so that when a user clicks on a card, the headline of the article is logged to the console.
+  const card = document.createElement('div');
+  
+    const headline = document.createElement('div');
+    const author = document.createElement('div');
+    const imgContainer = document.createElement('div');
+    const img = document.createElement('img');
+    const authorName = document.createElement('span');
+
+    card.classList.add('card');
+    headline.classList.toggle('headline');
+    author.classList.toggle('author');
+    imgContainer.classList.toggle('img-container');
+
+    headline.textContent = article.headline;
+    img.src = article.authorPhoto;
+    authorName.textContent = article.authorName;
+
+    card.appendChild(headline);
+    card.appendChild(author);
+    author.appendChild(imgContainer);
+    imgContainer.appendChild(img);
+    author.appendChild(authorName);
+
+  card.addEventListener('click', ()=>{
+    headline.classList.toggle('headline');
+  })
+
+  return card;
   //
   // <div class="card">
   //   <div class="headline">{ headline }</div>
@@ -18,10 +47,23 @@ const Card = (article) => {
   // </div>
   //
 }
-
 const cardAppender = (selector) => {
   // TASK 6
   // ---------------------
+  // async/await
+
+ const URL = 'http://localhost:5001/api/articles';
+ axios.get(URL)
+ .then(res => {
+  const headlines = Object.values(res.data.articles).flat()
+  for(let i = 0; i < headlines.length; i++){
+    const card = Card(headlines[i]);
+    document.querySelector(selector).appendChild(card)
+  }
+})
+.catch(err => console.error(err))
+
+  
   // Implement this function that takes a css selector as its only argument.
   // It should obtain articles from this endpoint: `http://localhost:5001/api/articles` (test it with console.log!!).
   // However, the articles do not come organized in a single, neat array. Inspect the response closely!
